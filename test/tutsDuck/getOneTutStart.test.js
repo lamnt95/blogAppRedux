@@ -1,0 +1,65 @@
+import _ from "lodash";
+import createStore from "../../src";
+import {
+  actions as tutsActions,
+  selectors as tutsSelectors,
+  types as tutsTypes
+} from "../../src/modulesDuck/tutsDuck";
+import tutsServices from "../../src/services/tutsServices";
+import { MODE_TEST_STORE } from "../../src/constant";
+import { getStore } from "../utils";
+
+describe("GET_ONE_TUT_START", () => {
+  it("right", () => {
+    jest.mock("../../src/services/tutsServices");
+    tutsServices.getOneTut = () =>
+      Promise.resolve({
+        id: "abcd1234",
+        slug: "how-to-train-your-dragon",
+        title: "How to train your dragon",
+        description: "Ever wonder how?",
+        body: "It takes a Jacobian",
+        tagList: ["dragons", "training"],
+        createdAt: "2016-02-18T03:22:56.637Z",
+        updatedAt: "2016-02-18T03:48:35.824Z",
+        favorited: false,
+        favoritesCount: 0,
+        author: {
+          username: "jake",
+          bio: "I work at statefarm",
+          image: "https://i.stack.imgur.com/xHWG8.jpg",
+          following: false
+        }
+      });
+
+    const expectTutsDuckState = {
+      abcd1234: {
+        id: "abcd1234",
+        slug: "how-to-train-your-dragon",
+        title: "How to train your dragon",
+        description: "Ever wonder how?",
+        body: "It takes a Jacobian",
+        tagList: ["dragons", "training"],
+        updatedAt: "2016-02-18T03:48:35.824Z",
+        favorited: false,
+        favoritesCount: 0,
+        author: {
+          username: "jake"
+        }
+      }
+    };
+
+    const store = createStore({ mode: MODE_TEST_STORE.TEST });
+    store.subscribe(() => {
+      const { newState, type, previusState } = getStore(store);
+      if (
+        !_.isEqual(previusState, newState) &&
+        type === tutsTypes.ADD_MANY_TUTS
+      ) {
+        const actualTutDuck = tutsSelectors.getTutsDuckData(newState);
+        expect(actualTutDuck).toEqual(expectTutsDuckState);
+      }
+    });
+    store.dispatch(tutsActions.getOneTutStart({ tuts: [{ id: "abcd1234" }] }));
+  });
+});
