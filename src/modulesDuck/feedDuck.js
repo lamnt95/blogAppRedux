@@ -10,7 +10,7 @@ export const types = {
   FETCH_FEED_START: "FEED/FETCH_FEED_START",
   FETCH_FEED_SUCCESS: "FEED/FETCH_FEED_SUCCESS",
   FETCH_FEED_FAIL: "FEED/FETCH_FEED_FAIL",
-  ADD_MANY_FEED: "FEED/ADD_MANY_FEED"
+  ADD_MANY_COMMON_FEED: "FEED/ADD_MANY_COMMON_FEED"
 };
 
 export const actions = {
@@ -29,22 +29,22 @@ export const actions = {
     error,
     meta
   }),
-  addManyFeed: (payload, meta) => ({
-    type: types.ADD_MANY_FEED,
+  addManyCommonFeed: (payload, meta) => ({
+    type: types.ADD_MANY_COMMON_FEED,
     payload,
     meta
   })
 };
 
 const getFeed = state => _.get(state, "feed.common");
-
-export const selectors = { getFeed };
+const getFeedDuckData = state => state.feed;
+export const selectors = { getFeed, getFeedDuckData };
 
 export const initialState = Immutable.from({ common: [] });
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case types.ADD_MANY_FEED: {
+    case types.ADD_MANY_COMMON_FEED: {
       const feeds = _.get(action, "payload.articles");
       const feedsID = feeds.map(({ id }) => id);
       const newState = Immutable.setIn(state, ["common"], feedsID);
@@ -80,9 +80,8 @@ const fetchFeedStartEpic = (action$, store) =>
 const fetchFeedSuccessEpic = action$ =>
   action$.pipe(
     ofType(types.FETCH_FEED_SUCCESS),
-    switchMap(
-      ({ payload }) =>
-        new Promise(resolve => resolve(actions.addManyFeed(payload)))
+    switchMap(({ payload }) =>
+      Promise.resolve(actions.addManyCommonFeed(payload))
     )
   );
 

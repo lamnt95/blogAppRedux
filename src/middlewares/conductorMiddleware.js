@@ -16,7 +16,8 @@ const getTutsPayload = articlesData => ({
       favoritesCount,
       id,
       slug,
-      author
+      author,
+      tagList
     }) => ({
       title,
       body,
@@ -26,6 +27,7 @@ const getTutsPayload = articlesData => ({
       favoritesCount,
       id,
       slug,
+      tagList,
       author: { username: author.username }
     })
   )

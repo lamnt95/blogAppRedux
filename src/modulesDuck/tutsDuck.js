@@ -61,13 +61,15 @@ const getTutsFavoritesCount = (state, id) =>
 const getTutsSlug = (state, id) => _.get(state, `tuts.${id}.slug`);
 const getTutsFavorited = (state, id) => _.get(state, `tuts.${id}.favorited`);
 const getTutsAuthor = (state, id) => _.get(state, `tuts.${id}.author.username`);
+const getTutsDuckData = state => state.tuts;
 
 export const selectors = {
   getTuts,
   getTutsSlug,
   getTutsAuthor,
   getTutsFavorited,
-  getTutsFavoritesCount
+  getTutsFavoritesCount,
+  getTutsDuckData
 };
 
 const initialState = Immutable.from({});
