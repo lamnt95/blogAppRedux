@@ -17,4 +17,6 @@ const unLikeTut = (accessToken, slug) => {
   return axios.request({ url, method: "DELETE", headers });
 };
 
-export default { likeTut, unLikeTut };
+const getOneTut = (accessToken, slug) => Promise.resolve();
+
+export default { likeTut, unLikeTut, getOneTut };

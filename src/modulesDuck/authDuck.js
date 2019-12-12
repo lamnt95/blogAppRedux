@@ -4,6 +4,7 @@ import { ofType } from "redux-observable";
 import { switchMap } from "rxjs/operators";
 
 import authServices from "../services/authServices";
+import { Observable } from "rxjs";
 
 export const types = {
   INIT_AUTH_START: "AUTH/INIT_AUTH_START",
@@ -13,7 +14,7 @@ export const types = {
   REGISTER_SUCCESS: "AUTH/REGISTER_SUCCESS",
   REGISTER_FAIL: "AUTH/REGISTER_FAIL",
   ADD_ACCESS_TOKEN: "AUTH/ADD_ACCESS_TOKEN",
-  ADD_USER_NAME_LOGIN: "AUTH/ADD_ACCESS_TOKEN"
+  ADD_USER_NAME_LOGIN: "AUTH/ADD_USER_NAME_LOGIN"
 };
 
 export const actions = {
@@ -69,16 +70,21 @@ export const selectors = {
   getUserNameLogin
 };
 
-export const initialState = Immutable.from({
+export const initialState = {
   accessToken: undefined,
   username: undefined
-});
+};
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case types.ADD_ACCESS_TOKEN: {
       const accessToken = _.get(action, "payload.user.token");
       const newState = Immutable.setIn(state, ["accessToken"], accessToken);
+      return newState;
+    }
+    case types.ADD_USER_NAME_LOGIN: {
+      const username = _.get(action, "payload.user.username");
+      const newState = Immutable.setIn(state, ["username"], username);
       return newState;
     }
     default: {
@@ -107,11 +113,12 @@ const initAuthStartEpic = action$ =>
 
 const initAuthSuccessEpic = action$ =>
   action$.pipe(
-    ofType(types.INIT_AUTH_SUCCESS),
+    ofType(types.INIT_AUTH_SUCCESS, types.REGISTER_SUCCESS),
     switchMap(
       ({ payload }) =>
-        new Promise(resolve => {
-          resolve(actions.addAccessToken(payload));
+        new Observable(observer => {
+          observer.next(actions.addAccessToken(payload));
+          observer.next(actions.addUserNameLogin(payload));
         })
     )
   );

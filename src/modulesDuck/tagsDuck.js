@@ -6,10 +6,10 @@ import { switchMap } from "rxjs/operators";
 import tagServices from "../services/tagServices";
 
 export const types = {
-  FETCH_TAGS_START: "FETCH_TAGS_START",
-  FETCH_TAGS_SUCCESS: "FETCH_TAGS_SUCCESS",
-  FETCH_TAGS_FAIL: "FETCH_TAGS_FAIL",
-  ADD_MANY_TAGS: "ADD_MANY_TAGS"
+  FETCH_TAGS_START: "TAGS/FETCH_TAGS_START",
+  FETCH_TAGS_SUCCESS: "TAGS/FETCH_TAGS_SUCCESS",
+  FETCH_TAGS_FAIL: "TAGS/FETCH_TAGS_FAIL",
+  ADD_MANY_TAGS: "TAGS/ADD_MANY_TAGS"
 };
 
 export const actions = {
