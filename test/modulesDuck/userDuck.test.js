@@ -20,7 +20,7 @@ describe("userduck", () => {
         }
       };
 
-      const store = createStore({ mode: MODE_TEST_STORE.LOG });
+      const store = createStore({ mode: MODE_TEST_STORE.TEST });
       store.subscribe(() => {
         const { previusState, newState, type } = getStore(store);
         if (
