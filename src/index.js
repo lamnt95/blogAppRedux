@@ -6,8 +6,8 @@ import rootEpic from "./rootEpic";
 import getRootMiddleware from "./middlewares";
 
 export default (config = {}) => {
-  const { mode } = config || {};
-  const initState = {};
+  const { mode, initialState = {} } = config || {};
+  const initState = { ...initialState };
 
   const epicMiddleware = createEpicMiddleware();
   const enhances = [

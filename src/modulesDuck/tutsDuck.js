@@ -121,7 +121,7 @@ const likeTutStartEpic = (action$, store) =>
           const { tuts } = payload;
           const { id } = tuts[0];
           const accessToken = authSelectors.getAccessToken(state);
-          const slug = tutsSelectors.getTutsSlug(state, id);
+          const slug = selectors.getTutsSlug(state, id);
           tutsServices
             .likeTut(accessToken, slug)
             .then(tuts => {
@@ -144,7 +144,7 @@ const unLikeTutStartEpic = (action$, store) =>
           const { tuts } = payload;
           const { id } = tuts[0];
           const accessToken = authSelectors.getAccessToken(state);
-          const slug = tutsSelectors.getTutsSlug(state, id);
+          const slug = selectors.getTutsSlug(state, id);
           tutsServices
             .unLikeTut(accessToken, slug)
             .then(tuts => {
