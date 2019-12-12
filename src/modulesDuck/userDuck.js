@@ -18,7 +18,7 @@ export const selectors = {
   getUser
 };
 
-const initialState = Immutable.from({});
+const initialState = {};
 
 export default (state = initialState, action) => {
   switch (action.type) {

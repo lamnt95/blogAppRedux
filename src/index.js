@@ -1,17 +1,24 @@
 import { createStore, compose, applyMiddleware } from "redux";
 import { createEpicMiddleware } from "redux-observable";
 
-import rootReducer from "./rootReducer";
+import getRootReducer from "./rootReducer";
 import rootEpic from "./rootEpic";
-import rootMiddleware from "./middlewares";
+import getRootMiddleware from "./middlewares";
 
-export default config => {
+export default (config = {}) => {
+  const { isTest } = config || {};
   const initState = {};
 
   const epicMiddleware = createEpicMiddleware();
-  const enhances = [applyMiddleware(...rootMiddleware, epicMiddleware)];
+  const enhances = [
+    applyMiddleware(...getRootMiddleware({ isTest }), epicMiddleware)
+  ];
 
-  const store = createStore(rootReducer, initState, compose(...enhances));
+  const store = createStore(
+    getRootReducer({ isTest }),
+    initState,
+    compose(...enhances)
+  );
 
   epicMiddleware.run(rootEpic);
   return store;

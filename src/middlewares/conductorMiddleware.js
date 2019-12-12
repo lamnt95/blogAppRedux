@@ -50,7 +50,6 @@ const conductorMiddleware = store => next => action => {
       const { articles } = action.payload || {};
       const tutsPayload = getTutsPayload(articles);
       const userPayload = getUserPayload(articles);
-      ``;
       store.dispatch(tutsActions.addManyTuts(tutsPayload));
       store.dispatch(userActions.addManyUser(userPayload));
       break;

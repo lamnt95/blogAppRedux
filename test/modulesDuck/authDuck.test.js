@@ -1,21 +1,51 @@
+import _ from "lodash";
 import createStore from "../../src";
-import { actions as authActions } from "../../src/modulesDuck/authDuck";
+import {
+  actions as authActions,
+  types as authTypes
+} from "../../src/modulesDuck/authDuck";
+import { selectors as actionDuckSelectors } from "../../src/modulesDuck/actionDuck";
 import authServices from "../../src/services/authServices";
 
 describe("authduck", () => {
   describe("INIT_AUTH_START", () => {
     it("test", () => {
       jest.mock("../../src/services/authServices");
-      authServices.login = jest
-        .fn()
-        .mockImplementation(() => Promise.resolve({ user: { token: "1234" } }));
-
-      const store = createStore();
-      store.dispatch(authActions.initAuthStart());
+      authServices.login = jest.fn().mockImplementation(() =>
+        Promise.resolve({
+          user: {
+            token: "1234",
+            username: "john",
+            bio: "bio",
+            image: "image",
+            email: "email"
+          }
+        })
+      );
+      const expectState = {
+        auth: { accessToken: "1234", username: "john" },
+        feed: { common: [] },
+        tags: [],
+        tuts: {},
+        user: {
+          john: { username: "john", bio: "bio", image: "image", email: "email" }
+        }
+      };
+      const store = createStore({ isTest: true });
       store.subscribe(() => {
-        console.log(store.getState());
+        const state = store.getState();
+        const previusState = actionDuckSelectors.getCurrentState(state);
+        const newState = actionDuckSelectors.getNewState(state);
+        const { type: lastType } =
+          actionDuckSelectors.getCurrentAction(state) || {};
+        if (
+          !_.isEqual(previusState, newState) &&
+          lastType === authTypes.ADD_USER_NAME_LOGIN
+        ) {
+          expect(expectState).toEqual(newState);
+        }
       });
-      expect(1).toBe(1);
+      store.dispatch(authActions.initAuthStart());
     });
   });
 });
