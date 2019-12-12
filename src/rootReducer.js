@@ -1,4 +1,6 @@
+import _ from "lodash";
 import { combineReducers } from "redux";
+import { MODE_TEST_STORE } from "./constant";
 
 import auth from "./modulesDuck/authDuck";
 import feed from "./modulesDuck/feedDuck";
@@ -8,8 +10,8 @@ import user from "./modulesDuck/userDuck";
 import actionDuck from "./modulesDuck/actionDuck";
 
 export default (config = {}) => (state, action) => {
-  const { isTest } = config;
-  const duckTest = isTest ? { actionDuck } : {};
+  const { mode } = config;
+  const duckTest = _.has(MODE_TEST_STORE, mode) ? { actionDuck } : {};
   const rootReducer = combineReducers({
     auth,
     feed,

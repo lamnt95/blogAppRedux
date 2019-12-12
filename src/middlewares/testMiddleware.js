@@ -1,9 +1,11 @@
+import { MODE_TEST_STORE } from "../constant";
 import {
   actions as actionDuckActions,
   types as actionDuckTypes
 } from "../modulesDuck/actionDuck";
 
-const testMiddleware = store => next => action => {
+const testMiddleware = (config = {}) => store => next => action => {
+  const { mode } = config;
   const { type } = action;
 
   if (type === actionDuckTypes.ADD_CURRENT_ACTION) {
@@ -17,7 +19,7 @@ const testMiddleware = store => next => action => {
     })
   );
 
-  // console.log(action.type);
+  if (mode === MODE_TEST_STORE.LOG) console.log(type);
   next(action);
 };
 

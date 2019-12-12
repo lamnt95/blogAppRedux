@@ -6,6 +6,7 @@ import {
 } from "../../src/modulesDuck/authDuck";
 import { selectors as actionDuckSelectors } from "../../src/modulesDuck/actionDuck";
 import authServices from "../../src/services/authServices";
+import { MODE_TEST_STORE } from "../../src/constant";
 
 describe("authduck", () => {
   describe("INIT_AUTH_START", () => {
@@ -31,7 +32,7 @@ describe("authduck", () => {
           john: { username: "john", bio: "bio", image: "image", email: "email" }
         }
       };
-      const store = createStore({ isTest: true });
+      const store = createStore({ mode: MODE_TEST_STORE.LOG });
       store.subscribe(() => {
         const state = store.getState();
         const previusState = actionDuckSelectors.getCurrentState(state);

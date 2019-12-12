@@ -6,16 +6,16 @@ import rootEpic from "./rootEpic";
 import getRootMiddleware from "./middlewares";
 
 export default (config = {}) => {
-  const { isTest } = config || {};
+  const { mode } = config || {};
   const initState = {};
 
   const epicMiddleware = createEpicMiddleware();
   const enhances = [
-    applyMiddleware(...getRootMiddleware({ isTest }), epicMiddleware)
+    applyMiddleware(...getRootMiddleware({ mode }), epicMiddleware)
   ];
 
   const store = createStore(
-    getRootReducer({ isTest }),
+    getRootReducer({ mode }),
     initState,
     compose(...enhances)
   );
