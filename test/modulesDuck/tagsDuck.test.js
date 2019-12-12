@@ -8,7 +8,6 @@ import {
 import { MODE_TEST_STORE } from "../../src/constant";
 import tagsServices from "../../src/services/tagServices";
 import { getStore } from "../utils";
-import { exportAllDeclaration } from "@babel/types";
 
 describe("tagsDuck", () => {
   describe("FETCH_TAGS_START", () => {
@@ -23,7 +22,10 @@ describe("tagsDuck", () => {
       const store = createStore({ mode: MODE_TEST_STORE.TEST });
       store.subscribe(() => {
         const { previusState, newState, type } = getStore(store);
-        if (!_.isEqual(previusState, newState)) {
+        if (
+          !_.isEqual(previusState, newState) &&
+          type === tagsTypes.ADD_MANY_TAGS
+        ) {
           const actualState = tagsSelectors.getTags(newState);
           expect(actualState).toEqual(expectTagsDuckState);
         }
