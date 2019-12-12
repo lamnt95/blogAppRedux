@@ -13,9 +13,11 @@ export const actions = {
   })
 };
 
+const getUserDuckData = state => state.user;
 const getUser = (state, username) => _.get(state, `user.${username}`);
 export const selectors = {
-  getUser
+  getUser,
+  getUserDuckData
 };
 
 const initialState = {};

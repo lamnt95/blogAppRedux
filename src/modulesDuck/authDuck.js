@@ -113,7 +113,7 @@ const initAuthStartEpic = action$ =>
 
 const initAuthSuccessEpic = action$ =>
   action$.pipe(
-    ofType(types.INIT_AUTH_SUCCESS),
+    ofType(types.INIT_AUTH_SUCCESS, types.REGISTER_SUCCESS),
     switchMap(
       ({ payload }) =>
         new Observable(observer => {
