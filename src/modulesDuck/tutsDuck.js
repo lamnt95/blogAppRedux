@@ -43,7 +43,16 @@ export const types = {
   UN_LIKE_TUT_FAIL: "TUTS/UN_LIKE_TUT_FAIL",
   GET_ONE_TUT_START: "TUTS/GET_ONE_TUT_START",
   GET_ONE_TUT_SUCCESS: "TUTS/GET_ONE_TUT_SUCCESS",
-  GET_ONE_TUT_FAIL: "TUTS/GET_ONE_TUT_FAIL"
+  GET_ONE_TUT_FAIL: "TUTS/GET_ONE_TUT_FAIL",
+  CREATE_TUT_START: "TUTS/CREATE_TUT_START",
+  CREATE_TUT_SUCCESS: "TUTS/CREATE_TUT_SUCCESS",
+  CREATE_TUT_FAIL: "TUTS/CREATE_TUT_FAIL",
+  UPDATE_TUT_START: "TUTS/UPDATE_TUT_START",
+  UPDATE_TUT_SUCCESS: "TUTS/UPDATE_TUT_SUCCESS",
+  UPDATE_TUT_FAIL: "TUTS/UPDATE_TUT_FAIL",
+  DELETE_TUT_START: "TUTS/DELETE_TUT_START",
+  DELETE_TUT_SUCCESS: "TUTS/DELETE_TUT_SUCCESS",
+  DELETE_TUT_FAIL: "TUTS/DELETE_TUT_FAIL"
 };
 
 export const actions = {
@@ -94,6 +103,51 @@ export const actions = {
   }),
   getOneTutFail: (error, meta) => ({
     type: types.GET_ONE_TUT_FAIL,
+    error,
+    meta
+  }),
+  createTutStart: (payload, meta) => ({
+    type: types.CREATE_TUT_START,
+    payload,
+    meta
+  }),
+  createTutSuccess: (payload, meta) => ({
+    type: types.CREATE_TUT_SUCCESS,
+    payload,
+    meta
+  }),
+  createTutFail: (error, meta) => ({
+    type: types.CREATE_TUT_FAIL,
+    error,
+    meta
+  }),
+  updateTutStart: (payload, meta) => ({
+    type: types.UPDATE_TUT_START,
+    payload,
+    meta
+  }),
+  updateTutSuccess: (payload, meta) => ({
+    type: types.UPDATE_TUT_SUCCESS,
+    payload,
+    meta
+  }),
+  updateTutFail: (error, meta) => ({
+    type: types.UPDATE_TUT_FAIL,
+    error,
+    meta
+  }),
+  deleteTutStart: (payload, meta) => ({
+    type: types.DELETE_TUT_START,
+    payload,
+    meta
+  }),
+  deleteTutSuccess: (payload, meta) => ({
+    type: types.DELETE_TUT_SUCCESS,
+    payload,
+    meta
+  }),
+  deleteTutFail: (error, meta) => ({
+    type: types.DELETE_TUT_FAIL,
     error,
     meta
   })
@@ -224,13 +278,35 @@ const getOneTutStartEpic = (action$, store) =>
 
 const addManyTutsEpic = action$ =>
   action$.pipe(
-    ofType(types.GET_ONE_TUT_SUCCESS),
+    ofType(types.GET_ONE_TUT_SUCCESS, types.CREATE_TUT_SUCCESS),
     switchMap(({ payload }) => Promise.resolve(actions.addManyTuts(payload)))
+  );
+
+const createTutStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.CREATE_TUT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts } = payload;
+          const tut = _.head(tuts) || {};
+
+          tutsServices
+            .createTut(accessToken, tut)
+            .then(resTut =>
+              resolve(actions.createTutSuccess({ tuts: [resTut] }))
+            )
+            .catch(error => resolve(actions.createTutFail(error)));
+        })
+    )
   );
 
 export const epics = [
   likeTutStartEpic,
   unLikeTutStartEpic,
   getOneTutStartEpic,
-  addManyTutsEpic
+  addManyTutsEpic,
+  createTutStartEpic
 ];

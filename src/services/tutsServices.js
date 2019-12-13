@@ -19,4 +19,14 @@ const unLikeTut = (accessToken, slug) => {
 
 const getOneTut = (accessToken, slug) => Promise.resolve();
 
-export default { likeTut, unLikeTut, getOneTut };
+const createTut = (accessToken, tut) => {
+  const { title, description, body, tagList } = tut || {};
+  const data = { title, description, body, tagList };
+  const url = `${config.conduitApi}/api/articles`;
+  const headers = {
+    Authorization: `Token ${accessToken}`
+  };
+  return axios.request({ url, method: "POST", headers, data });
+};
+
+export default { likeTut, unLikeTut, getOneTut, createTut };

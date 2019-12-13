@@ -46,6 +46,7 @@ const conductorMiddleware = store => next => action => {
       break;
     }
 
+    case tutsType.CREATE_TUT_SUCCESS:
     case tutsType.GET_ONE_TUT_SUCCESS: {
       const userPayload = convertTutsToUserPayload(action.payload);
       store.dispatch(userActions.addManyUser(userPayload));
