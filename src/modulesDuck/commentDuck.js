@@ -86,8 +86,9 @@ export const initialState = {};
 export default (state = initialState, action) => {
   switch (action.type) {
     case types.ADD_MANY_COMMENT: {
-      const { tutId, commentsData } = action.payload;
-      const commentsDataKeyBy = _.keyBy(commentsData, "id");
+      const { tuts, comments } = action.payload;
+      const { id: tutId } = tuts || {};
+      const commentsDataKeyBy = _.keyBy(comments, "id");
       const currentCommentsData = state[tutId] || {};
       const newCommentsData = Immutable.merge(
         currentCommentsData,
@@ -100,9 +101,10 @@ export default (state = initialState, action) => {
     }
 
     case types.REMOVE_MANY_COMMENT: {
-      const { tutId, commentsData } = action.payload;
+      const { tuts, comments } = action.payload;
+      const { id: tutId } = tuts || {};
       const currentState = { ...state };
-      _.forEach(commentsData, ({ id }) => {
+      _.forEach(comments, ({ id }) => {
         if (_.has(state, tutId)) {
           delete currentState[tutId][id];
         }
@@ -124,12 +126,12 @@ const getCommentStartEpic = (action$, store) =>
           const state = store.value;
           const accessToken = authSelectors.getAccessToken(state);
           const { tuts } = payload;
-          const { id: tutId, slug } = tuts || {};
+          const { slug } = tuts || {};
 
           commentServices
             .getComments(accessToken, slug)
-            .then(commentsData =>
-              resolve(actions.getCommentSuccess({ tutId, commentsData }))
+            .then(comments =>
+              resolve(actions.getCommentSuccess({ tuts, comments }))
             )
             .catch(error => resolve(actions.getCommentFail(error)));
         })
@@ -145,12 +147,12 @@ const createCommentStartEpic = (action$, store) =>
           const state = store.value;
           const accessToken = authSelectors.getAccessToken(state);
           const { tuts } = payload;
-          const { id: tutId, slug } = tuts || {};
+          const { slug } = tuts || {};
 
           commentServices
             .createComment(accessToken, slug)
-            .then(commentsData =>
-              resolve(actions.createCommentSuccess({ tutId, commentsData }))
+            .then(comments =>
+              resolve(actions.createCommentSuccess({ tuts, comments }))
             )
             .catch(error => resolve(actions.createCommentFail(error)));
         })
@@ -166,19 +168,12 @@ const deleteCommentStartEpic = (action$, store) =>
           const state = store.value;
           const accessToken = authSelectors.getAccessToken(state);
           const { tuts, comments } = payload;
-          const { id: tutId, slug } = tuts || {};
+          const { slug } = tuts || {};
           const { id: idComment } = _.head(comments);
 
           commentServices
             .deleteComment(accessToken, slug, idComment)
-            .then(() =>
-              resolve(
-                actions.deleteCommentSuccess({
-                  tutId,
-                  commentsData: [{ id: idComment }]
-                })
-              )
-            )
+            .then(() => resolve(actions.deleteCommentSuccess(payload)))
             .catch(error => resolve(actions.deleteCommentFail(error)));
         })
     )

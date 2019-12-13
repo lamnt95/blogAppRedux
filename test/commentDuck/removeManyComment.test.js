@@ -73,8 +73,8 @@ describe("REMOVE_MANY_COMMENT", () => {
     });
     store.dispatch(
       commentActions.removeManyComment({
-        tutId: "tutId1",
-        commentsData: [{ id: "commentId2" }]
+        tuts: { id: "tutId1" },
+        comments: [{ id: "commentId2" }]
       })
     );
   });

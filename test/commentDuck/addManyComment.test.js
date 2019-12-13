@@ -34,8 +34,8 @@ describe("ADD_MANY_COMMENT", () => {
     });
     store.dispatch(
       commentActions.addManyComment({
-        tutId: "tutId1",
-        commentsData: [
+        tuts: { id: "tutId1" },
+        comments: [
           {
             id: "commentId1",
             body: "It takes a Jacobian",
@@ -87,8 +87,8 @@ describe("ADD_MANY_COMMENT", () => {
     });
     store.dispatch(
       commentActions.addManyComment({
-        tutId: "tutId1",
-        commentsData: [
+        tuts: { id: "tutId1" },
+        comments: [
           {
             id: "commentId1",
             body: "It takes a Jacobian",
