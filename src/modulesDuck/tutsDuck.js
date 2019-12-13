@@ -35,6 +35,7 @@ const filterDataTuts = tuts =>
 
 export const types = {
   ADD_MANY_TUTS: "TUTS/ADD_MANY_TUTS",
+  REMOVE_MANY_TUTS: "TUTS/REMOVE_MANY_TUTS",
   LIKE_TUT_START: "TUTS/LIKE_TUT_START",
   LIKE_TUT_SUCCESS: "TUTS/LIKE_TUT_SUCCESS",
   LIKE_TUT_FAIL: "TUTS/LIKE_TUT_FAIL",
@@ -58,6 +59,11 @@ export const types = {
 export const actions = {
   addManyTuts: (payload, meta) => ({
     type: types.ADD_MANY_TUTS,
+    payload,
+    meta
+  }),
+  removeManyTuts: (payload, meta) => ({
+    type: types.REMOVE_MANY_TUTS,
     payload,
     meta
   }),
@@ -181,6 +187,7 @@ export default (state = initialState, action) => {
       const newState = Immutable.merge(state, tutsKeyBy, { deep: true });
       return newState;
     }
+
     case types.LIKE_TUT_START: {
       const tuts = _.get(action, "payload.tuts") || [];
       if (_.isEmpty(tuts)) return state;
@@ -193,6 +200,7 @@ export default (state = initialState, action) => {
       });
       return newState;
     }
+
     case types.UN_LIKE_TUT_START: {
       const tuts = _.get(action, "payload.tuts") || [];
       if (_.isEmpty(tuts)) return state;
@@ -205,6 +213,19 @@ export default (state = initialState, action) => {
       });
       return newState;
     }
+
+    case types.REMOVE_MANY_TUTS: {
+      const tuts = _.get(action, "payload.tuts") || [];
+      const currentState = { ...state };
+      _.forEach(tuts, tut => {
+        const { id } = tut || {};
+        if (id && _.has(currentState, id)) {
+          delete currentState[id];
+        }
+      });
+      return currentState;
+    }
+
     default:
       return state;
   }
@@ -328,11 +349,38 @@ const updateTutStartEpic = (action$, store) =>
     )
   );
 
+const deleteTutStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.DELETE_TUT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts } = payload;
+          const tut = _.head(tuts) || {};
+
+          tutsServices
+            .deleteTut(accessToken, tut)
+            .then(() => resolve(actions.deleteTutSuccess(payload)))
+            .catch(error => resolve(actions.deleteTutFail(error)));
+        })
+    )
+  );
+
+const removeManyTutsEpic = action$ =>
+  action$.pipe(
+    ofType(types.DELETE_TUT_SUCCESS),
+    switchMap(({ payload }) => Promise.resolve(actions.removeManyTuts(payload)))
+  );
+
 export const epics = [
   likeTutStartEpic,
   unLikeTutStartEpic,
   getOneTutStartEpic,
   addManyTutsEpic,
   createTutStartEpic,
-  updateTutStartEpic
+  updateTutStartEpic,
+  deleteTutStartEpic,
+  removeManyTutsEpic
 ];

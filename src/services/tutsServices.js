@@ -39,4 +39,20 @@ const updateTut = (accessToken, tut) => {
   return axios.request({ url, method: "PUT", headers, data });
 };
 
-export default { likeTut, unLikeTut, getOneTut, createTut, updateTut };
+const deleteTut = (accessToken, tut) => {
+  const { slug } = tut || {};
+  const url = `${config.conduitApi}/api/articles/${slug}`;
+  const headers = {
+    Authorization: `Token ${accessToken}`
+  };
+  return axios.request({ url, method: "DELETE", headers });
+};
+
+export default {
+  likeTut,
+  unLikeTut,
+  getOneTut,
+  createTut,
+  updateTut,
+  deleteTut
+};
