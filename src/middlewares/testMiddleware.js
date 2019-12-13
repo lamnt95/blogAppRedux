@@ -6,7 +6,7 @@ import {
 
 const testMiddleware = (config = {}) => store => next => action => {
   const { mode } = config;
-  const { type } = action;
+  const { type, payload } = action;
 
   if (type === actionDuckTypes.ADD_CURRENT_ACTION) {
     return next(action);
@@ -19,7 +19,8 @@ const testMiddleware = (config = {}) => store => next => action => {
     })
   );
 
-  if (mode === MODE_TEST_STORE.LOG) console.log(type);
+  if (mode === MODE_TEST_STORE.LOG)
+    console.log(`${type} *** ${JSON.stringify(payload)}`);
   next(action);
 };
 

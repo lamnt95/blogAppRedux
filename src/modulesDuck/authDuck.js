@@ -63,11 +63,13 @@ export const actions = {
 const getAccessToken = state => _.get(state, "auth.accessToken");
 const getUserNameLogin = state => _.get(state, "auth.username");
 const checkIsGuest = state => getAccessToken(state) === undefined;
+const getAuthDuckData = state => state.auth;
 
 export const selectors = {
   checkIsGuest,
   getAccessToken,
-  getUserNameLogin
+  getUserNameLogin,
+  getAuthDuckData
 };
 
 export const initialState = {

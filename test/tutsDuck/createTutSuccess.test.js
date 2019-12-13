@@ -10,10 +10,10 @@ import tutsServices from "../../src/services/tutsServices";
 import { MODE_TEST_STORE } from "../../src/constant";
 import { getStore } from "../utils";
 
-describe("GET_ONE_TUT_START", () => {
-  it("right", () => {
+describe("CREATE_TUT_SUCCESS", () => {
+  it("should create tut success", () => {
     jest.mock("../../src/services/tutsServices");
-    tutsServices.getOneTut = () =>
+    tutsServices.createTut = () =>
       Promise.resolve({
         id: "abcd1234",
         slug: "how-to-train-your-dragon",
@@ -72,6 +72,17 @@ describe("GET_ONE_TUT_START", () => {
         expect(actualUserDuck).toEqual(expectUserDuckState);
       }
     });
-    store.dispatch(tutsActions.getOneTutStart({ tuts: [{ id: "abcd1234" }] }));
+    store.dispatch(
+      tutsActions.createTutStart({
+        tuts: [
+          {
+            title: "How to train your dragon",
+            description: "Ever wonder how?",
+            body: "It takes a Jacobian",
+            tagList: ["dragons", "training"]
+          }
+        ]
+      })
+    );
   });
 });
