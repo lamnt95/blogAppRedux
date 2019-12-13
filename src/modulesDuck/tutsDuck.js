@@ -278,7 +278,11 @@ const getOneTutStartEpic = (action$, store) =>
 
 const addManyTutsEpic = action$ =>
   action$.pipe(
-    ofType(types.GET_ONE_TUT_SUCCESS, types.CREATE_TUT_SUCCESS),
+    ofType(
+      types.GET_ONE_TUT_SUCCESS,
+      types.CREATE_TUT_SUCCESS,
+      types.UPDATE_TUT_SUCCESS
+    ),
     switchMap(({ payload }) => Promise.resolve(actions.addManyTuts(payload)))
   );
 
@@ -303,10 +307,32 @@ const createTutStartEpic = (action$, store) =>
     )
   );
 
+const updateTutStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.UPDATE_TUT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts } = payload;
+          const tut = _.head(tuts) || {};
+
+          tutsServices
+            .updateTut(accessToken, tut)
+            .then(resTut =>
+              resolve(actions.updateTutSuccess({ tuts: [resTut] }))
+            )
+            .catch(error => resolve(actions.updateTutFail(error)));
+        })
+    )
+  );
+
 export const epics = [
   likeTutStartEpic,
   unLikeTutStartEpic,
   getOneTutStartEpic,
   addManyTutsEpic,
-  createTutStartEpic
+  createTutStartEpic,
+  updateTutStartEpic
 ];

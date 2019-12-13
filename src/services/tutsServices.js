@@ -29,4 +29,14 @@ const createTut = (accessToken, tut) => {
   return axios.request({ url, method: "POST", headers, data });
 };
 
-export default { likeTut, unLikeTut, getOneTut, createTut };
+const updateTut = (accessToken, tut) => {
+  const { title, description, body, slug } = tut || {};
+  const data = { title, description, body };
+  const url = `${config.conduitApi}/api/articles/${slug}`;
+  const headers = {
+    Authorization: `Token ${accessToken}`
+  };
+  return axios.request({ url, method: "PUT", headers, data });
+};
+
+export default { likeTut, unLikeTut, getOneTut, createTut, updateTut };

@@ -2,7 +2,8 @@ import _ from "lodash";
 import createStore from "../../src";
 import {
   actions as authActions,
-  types as authTypes
+  types as authTypes,
+  selectors as authSelectors
 } from "../../src/modulesDuck/authDuck";
 import { selectors as userSelectors } from "../../src/modulesDuck/userDuck";
 import authServices from "../../src/services/authServices";
