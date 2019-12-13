@@ -8,6 +8,7 @@ import tags from "./modulesDuck/tagsDuck";
 import tuts from "./modulesDuck/tutsDuck";
 import user from "./modulesDuck/userDuck";
 import actionDuck from "./modulesDuck/actionDuck";
+import comment from "./modulesDuck/commentDuck";
 
 export default (config = {}) => (state, action) => {
   const { mode } = config;
@@ -18,6 +19,7 @@ export default (config = {}) => (state, action) => {
     tags,
     tuts,
     user,
+    comment,
     ...duckTest
   });
   return rootReducer(state, action);
