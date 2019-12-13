@@ -3,6 +3,9 @@ import _ from "lodash";
 import { ofType } from "redux-observable";
 import { switchMap } from "rxjs/operators";
 
+import { selectors as authSelectors } from "./authDuck";
+import commentServices from "../services/commentServices";
+
 export const types = {
   CREATE_COMMENT_START: "COMMENT/CREATE_COMMENT_START",
   CREATE_COMMENT_SUCCESS: "COMMENT/CREATE_COMMENT_SUCCESS",
@@ -112,4 +115,31 @@ export default (state = initialState, action) => {
   }
 };
 
-export const epics = [];
+const getCommentStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.GET_COMMENT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts } = payload;
+          const { id: tutId, slug } = tuts || {};
+
+          commentServices
+            .getComments(accessToken, slug)
+            .then(commentsData =>
+              resolve(actions.getCommentSuccess({ tutId, commentsData }))
+            )
+            .catch(error => resolve(actions.getCommentFail(error)));
+        })
+    )
+  );
+
+const addManyCommentEpic = action$ =>
+  action$.pipe(
+    ofType(types.GET_COMMENT_SUCCESS),
+    switchMap(({ payload }) => Promise.resolve(actions.addManyComment(payload)))
+  );
+
+export const epics = [getCommentStartEpic, addManyCommentEpic];
