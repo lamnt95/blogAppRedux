@@ -35,6 +35,7 @@ const filterDataTuts = tuts =>
 
 export const types = {
   ADD_MANY_TUTS: "TUTS/ADD_MANY_TUTS",
+  REMOVE_MANY_TUTS: "TUTS/REMOVE_MANY_TUTS",
   LIKE_TUT_START: "TUTS/LIKE_TUT_START",
   LIKE_TUT_SUCCESS: "TUTS/LIKE_TUT_SUCCESS",
   LIKE_TUT_FAIL: "TUTS/LIKE_TUT_FAIL",
@@ -43,12 +44,26 @@ export const types = {
   UN_LIKE_TUT_FAIL: "TUTS/UN_LIKE_TUT_FAIL",
   GET_ONE_TUT_START: "TUTS/GET_ONE_TUT_START",
   GET_ONE_TUT_SUCCESS: "TUTS/GET_ONE_TUT_SUCCESS",
-  GET_ONE_TUT_FAIL: "TUTS/GET_ONE_TUT_FAIL"
+  GET_ONE_TUT_FAIL: "TUTS/GET_ONE_TUT_FAIL",
+  CREATE_TUT_START: "TUTS/CREATE_TUT_START",
+  CREATE_TUT_SUCCESS: "TUTS/CREATE_TUT_SUCCESS",
+  CREATE_TUT_FAIL: "TUTS/CREATE_TUT_FAIL",
+  UPDATE_TUT_START: "TUTS/UPDATE_TUT_START",
+  UPDATE_TUT_SUCCESS: "TUTS/UPDATE_TUT_SUCCESS",
+  UPDATE_TUT_FAIL: "TUTS/UPDATE_TUT_FAIL",
+  DELETE_TUT_START: "TUTS/DELETE_TUT_START",
+  DELETE_TUT_SUCCESS: "TUTS/DELETE_TUT_SUCCESS",
+  DELETE_TUT_FAIL: "TUTS/DELETE_TUT_FAIL"
 };
 
 export const actions = {
   addManyTuts: (payload, meta) => ({
     type: types.ADD_MANY_TUTS,
+    payload,
+    meta
+  }),
+  removeManyTuts: (payload, meta) => ({
+    type: types.REMOVE_MANY_TUTS,
     payload,
     meta
   }),
@@ -96,6 +111,51 @@ export const actions = {
     type: types.GET_ONE_TUT_FAIL,
     error,
     meta
+  }),
+  createTutStart: (payload, meta) => ({
+    type: types.CREATE_TUT_START,
+    payload,
+    meta
+  }),
+  createTutSuccess: (payload, meta) => ({
+    type: types.CREATE_TUT_SUCCESS,
+    payload,
+    meta
+  }),
+  createTutFail: (error, meta) => ({
+    type: types.CREATE_TUT_FAIL,
+    error,
+    meta
+  }),
+  updateTutStart: (payload, meta) => ({
+    type: types.UPDATE_TUT_START,
+    payload,
+    meta
+  }),
+  updateTutSuccess: (payload, meta) => ({
+    type: types.UPDATE_TUT_SUCCESS,
+    payload,
+    meta
+  }),
+  updateTutFail: (error, meta) => ({
+    type: types.UPDATE_TUT_FAIL,
+    error,
+    meta
+  }),
+  deleteTutStart: (payload, meta) => ({
+    type: types.DELETE_TUT_START,
+    payload,
+    meta
+  }),
+  deleteTutSuccess: (payload, meta) => ({
+    type: types.DELETE_TUT_SUCCESS,
+    payload,
+    meta
+  }),
+  deleteTutFail: (error, meta) => ({
+    type: types.DELETE_TUT_FAIL,
+    error,
+    meta
   })
 };
 
@@ -127,6 +187,7 @@ export default (state = initialState, action) => {
       const newState = Immutable.merge(state, tutsKeyBy, { deep: true });
       return newState;
     }
+
     case types.LIKE_TUT_START: {
       const tuts = _.get(action, "payload.tuts") || [];
       if (_.isEmpty(tuts)) return state;
@@ -139,6 +200,7 @@ export default (state = initialState, action) => {
       });
       return newState;
     }
+
     case types.UN_LIKE_TUT_START: {
       const tuts = _.get(action, "payload.tuts") || [];
       if (_.isEmpty(tuts)) return state;
@@ -151,6 +213,19 @@ export default (state = initialState, action) => {
       });
       return newState;
     }
+
+    case types.REMOVE_MANY_TUTS: {
+      const tuts = _.get(action, "payload.tuts") || [];
+      const currentState = { ...state };
+      _.forEach(tuts, tut => {
+        const { id } = tut || {};
+        if (id && _.has(currentState, id)) {
+          delete currentState[id];
+        }
+      });
+      return currentState;
+    }
+
     default:
       return state;
   }
@@ -224,13 +299,88 @@ const getOneTutStartEpic = (action$, store) =>
 
 const addManyTutsEpic = action$ =>
   action$.pipe(
-    ofType(types.GET_ONE_TUT_SUCCESS),
+    ofType(
+      types.GET_ONE_TUT_SUCCESS,
+      types.CREATE_TUT_SUCCESS,
+      types.UPDATE_TUT_SUCCESS
+    ),
     switchMap(({ payload }) => Promise.resolve(actions.addManyTuts(payload)))
+  );
+
+const createTutStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.CREATE_TUT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts } = payload;
+          const tut = _.head(tuts) || {};
+
+          tutsServices
+            .createTut(accessToken, tut)
+            .then(resTut =>
+              resolve(actions.createTutSuccess({ tuts: [resTut] }))
+            )
+            .catch(error => resolve(actions.createTutFail(error)));
+        })
+    )
+  );
+
+const updateTutStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.UPDATE_TUT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts } = payload;
+          const tut = _.head(tuts) || {};
+
+          tutsServices
+            .updateTut(accessToken, tut)
+            .then(resTut =>
+              resolve(actions.updateTutSuccess({ tuts: [resTut] }))
+            )
+            .catch(error => resolve(actions.updateTutFail(error)));
+        })
+    )
+  );
+
+const deleteTutStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.DELETE_TUT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts } = payload;
+          const tut = _.head(tuts) || {};
+
+          tutsServices
+            .deleteTut(accessToken, tut)
+            .then(() => resolve(actions.deleteTutSuccess(payload)))
+            .catch(error => resolve(actions.deleteTutFail(error)));
+        })
+    )
+  );
+
+const removeManyTutsEpic = action$ =>
+  action$.pipe(
+    ofType(types.DELETE_TUT_SUCCESS),
+    switchMap(({ payload }) => Promise.resolve(actions.removeManyTuts(payload)))
   );
 
 export const epics = [
   likeTutStartEpic,
   unLikeTutStartEpic,
   getOneTutStartEpic,
-  addManyTutsEpic
+  addManyTutsEpic,
+  createTutStartEpic,
+  updateTutStartEpic,
+  deleteTutStartEpic,
+  removeManyTutsEpic
 ];
