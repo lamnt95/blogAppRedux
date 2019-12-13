@@ -136,10 +136,35 @@ const getCommentStartEpic = (action$, store) =>
     )
   );
 
+const createCommentStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.CREATE_COMMENT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts } = payload;
+          const { id: tutId, slug } = tuts || {};
+
+          commentServices
+            .createComment(accessToken, slug)
+            .then(commentsData =>
+              resolve(actions.createCommentSuccess({ tutId, commentsData }))
+            )
+            .catch(error => resolve(actions.createCommentFail(error)));
+        })
+    )
+  );
+
 const addManyCommentEpic = action$ =>
   action$.pipe(
-    ofType(types.GET_COMMENT_SUCCESS),
+    ofType(types.GET_COMMENT_SUCCESS, types.CREATE_COMMENT_SUCCESS),
     switchMap(({ payload }) => Promise.resolve(actions.addManyComment(payload)))
   );
 
-export const epics = [getCommentStartEpic, addManyCommentEpic];
+export const epics = [
+  getCommentStartEpic,
+  addManyCommentEpic,
+  createCommentStartEpic
+];
