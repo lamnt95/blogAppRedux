@@ -17,4 +17,14 @@ const createComment = (accessToken, slug) => {
   return axios.request({ url, method: "POST", headers }).then(res => res.data);
 };
 
-export default { getComments, createComment };
+const deleteComment = (accessToken, slug, idComment) => {
+  const url = `${config.conduitApi}/api/articles/${slug}/comments/${idComment}`;
+  const headers = {
+    Authorization: `Bearer ${accessToken}`
+  };
+  return axios
+    .request({ url, method: "DELETE", headers })
+    .then(res => res.data);
+};
+
+export default { getComments, createComment, deleteComment };

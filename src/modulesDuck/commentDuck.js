@@ -102,9 +102,9 @@ export default (state = initialState, action) => {
     case types.REMOVE_MANY_COMMENT: {
       const { tutId, commentsData } = action.payload;
       const currentState = { ...state };
-      _.forEach(commentsData, commentId => {
+      _.forEach(commentsData, ({ id }) => {
         if (_.has(state, tutId)) {
-          delete currentState[tutId][commentId];
+          delete currentState[tutId][id];
         }
       });
       return Immutable.from(currentState);
@@ -157,14 +157,51 @@ const createCommentStartEpic = (action$, store) =>
     )
   );
 
+const deleteCommentStartEpic = (action$, store) =>
+  action$.pipe(
+    ofType(types.DELETE_COMMENT_START),
+    switchMap(
+      ({ payload }) =>
+        new Promise(resolve => {
+          const state = store.value;
+          const accessToken = authSelectors.getAccessToken(state);
+          const { tuts, comments } = payload;
+          const { id: tutId, slug } = tuts || {};
+          const { id: idComment } = _.head(comments);
+
+          commentServices
+            .deleteComment(accessToken, slug, idComment)
+            .then(() =>
+              resolve(
+                actions.deleteCommentSuccess({
+                  tutId,
+                  commentsData: [{ id: idComment }]
+                })
+              )
+            )
+            .catch(error => resolve(actions.deleteCommentFail(error)));
+        })
+    )
+  );
+
 const addManyCommentEpic = action$ =>
   action$.pipe(
     ofType(types.GET_COMMENT_SUCCESS, types.CREATE_COMMENT_SUCCESS),
     switchMap(({ payload }) => Promise.resolve(actions.addManyComment(payload)))
   );
 
+const removeManyCommentEpic = action$ =>
+  action$.pipe(
+    ofType(types.DELETE_COMMENT_SUCCESS),
+    switchMap(({ payload }) =>
+      Promise.resolve(actions.removeManyComment(payload))
+    )
+  );
+
 export const epics = [
   getCommentStartEpic,
   addManyCommentEpic,
-  createCommentStartEpic
+  createCommentStartEpic,
+  deleteCommentStartEpic,
+  removeManyCommentEpic
 ];

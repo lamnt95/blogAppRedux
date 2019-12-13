@@ -5,33 +5,30 @@ import {
   selectors as commentSelectors,
   types as commentTypes
 } from "../../src/modulesDuck/commentDuck";
+import commentServices from "../../src/services/commentServices";
 import { MODE_TEST_STORE } from "../../src/constant";
 import { getStore } from "../utils";
 
-describe("REMOVE_MANY_COMMENT", () => {
-  it("Remove exist comment", () => {
+describe("CREATE_COMMENT_SUCCESS", () => {
+  it("delete comment success", () => {
+    jest.mock("../../src/services/authServices");
+    commentServices.deleteComment = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
+
     const initialState = {
       comment: {
         tutId1: {
-          commentId1: {
-            id: "commentId1",
-            body: "Body comment 1",
+          commentId0: {
+            id: "commentId0",
+            body: "Body comment 0",
             author: {
               username: "jake"
             }
           },
-          commentId2: {
-            id: "commentId2",
-            body: "Body comment 2",
-            author: {
-              username: "jake"
-            }
-          }
-        },
-        tutId2: {
-          commentId3: {
-            id: "commentId3",
-            body: "Body comment 3",
+          commentId1: {
+            id: "commentId1",
+            body: "Body comment 1",
             author: {
               username: "jake"
             }
@@ -42,18 +39,9 @@ describe("REMOVE_MANY_COMMENT", () => {
 
     const expectCommentDuckState = {
       tutId1: {
-        commentId1: {
-          id: "commentId1",
-          body: "Body comment 1",
-          author: {
-            username: "jake"
-          }
-        }
-      },
-      tutId2: {
-        commentId3: {
-          id: "commentId3",
-          body: "Body comment 3",
+        commentId0: {
+          id: "commentId0",
+          body: "Body comment 0",
           author: {
             username: "jake"
           }
@@ -72,9 +60,11 @@ describe("REMOVE_MANY_COMMENT", () => {
       }
     });
     store.dispatch(
-      commentActions.removeManyComment({
-        tutId: "tutId1",
-        commentsData: [{ id: "commentId2" }]
+      commentActions.deleteCommentStart({
+        tuts: {
+          id: "tutId1"
+        },
+        comments: [{ id: "commentId1" }]
       })
     );
   });
