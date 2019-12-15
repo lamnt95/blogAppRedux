@@ -4,9 +4,9 @@ import {
   actions as feedActions,
   types as feedTypes,
   selectors as feedSelectors
-} from "../../src/modulesDuck/feedDuck";
-import { selectors as userSelectors } from "../../src/modulesDuck/userDuck";
-import { selectors as tutsSelectors } from "../../src/modulesDuck/tutsDuck";
+} from "../../src/reducers/feedDuck";
+import { selectors as userSelectors } from "../../src/reducers/userDuck";
+import { selectors as tutsSelectors } from "../../src/reducers/tutsDuck";
 import feedServices from "../../src/services/feedServices";
 import { MODE_TEST_STORE } from "../../src/constant";
 import { getStore } from "../utils";

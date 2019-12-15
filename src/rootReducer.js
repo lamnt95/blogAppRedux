@@ -2,13 +2,13 @@ import _ from "lodash";
 import { combineReducers } from "redux";
 import { MODE_TEST_STORE } from "./constant";
 
-import auth from "./modulesDuck/authDuck";
-import feed from "./modulesDuck/feedDuck";
-import tags from "./modulesDuck/tagsDuck";
-import tuts from "./modulesDuck/tutsDuck";
-import user from "./modulesDuck/userDuck";
-import actionDuck from "./modulesDuck/actionDuck";
-import comment from "./modulesDuck/commentDuck";
+import auth from "./reducers/authDuck";
+import feed from "./reducers/feedDuck";
+import tags from "./reducers/tagsDuck";
+import tuts from "./reducers/tutsDuck";
+import user from "./reducers/userDuck";
+import actionDuck from "./reducers/actionDuck";
+import comment from "./reducers/commentDuck";
 
 export default (config = {}) => (state, action) => {
   const { mode } = config;

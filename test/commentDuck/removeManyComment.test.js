@@ -4,7 +4,7 @@ import {
   actions as commentActions,
   selectors as commentSelectors,
   types as commentTypes
-} from "../../src/modulesDuck/commentDuck";
+} from "../../src/reducers/commentDuck";
 import { MODE_TEST_STORE } from "../../src/constant";
 import { getStore } from "../utils";
 

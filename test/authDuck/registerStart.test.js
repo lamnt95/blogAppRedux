@@ -4,8 +4,8 @@ import {
   actions as authActions,
   types as authTypes,
   selectors as authSelectors
-} from "../../src/modulesDuck/authDuck";
-import { selectors as userSelectors } from "../../src/modulesDuck/userDuck";
+} from "../../src/reducers/authDuck";
+import { selectors as userSelectors } from "../../src/reducers/userDuck";
 import authServices from "../../src/services/authServices";
 import { MODE_TEST_STORE } from "../../src/constant";
 import { getStore } from "../utils";

@@ -1,4 +1,4 @@
-import { selectors as actionDuckSelectors } from "../src/modulesDuck/actionDuck";
+import { selectors as actionDuckSelectors } from "../src/reducers/actionDuck";
 
 export const getStore = store => {
   const state = store.getState();

@@ -4,8 +4,8 @@ import {
   actions as tutsActions,
   selectors as tutsSelectors,
   types as tutsTypes
-} from "../../src/modulesDuck/tutsDuck";
-import { selectors as userSelectors } from "../../src/modulesDuck/userDuck";
+} from "../../src/reducers/tutsDuck";
+import { selectors as userSelectors } from "../../src/reducers/userDuck";
 import tutsServices from "../../src/services/tutsServices";
 import { MODE_TEST_STORE } from "../../src/constant";
 import { getStore } from "../utils";

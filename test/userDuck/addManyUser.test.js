@@ -4,7 +4,7 @@ import {
   actions as userActions,
   types as userTypes,
   selectors as userSelectors
-} from "../../src/modulesDuck/userDuck";
+} from "../../src/reducers/userDuck";
 import { MODE_TEST_STORE } from "../../src/constant";
 import { getStore } from "../utils";
 

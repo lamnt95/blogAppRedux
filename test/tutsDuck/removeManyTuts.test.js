@@ -4,7 +4,7 @@ import {
   actions as tutsActions,
   selectors as tutsSelectors,
   types as tutsTypes
-} from "../../src/modulesDuck/tutsDuck";
+} from "../../src/reducers/tutsDuck";
 import { MODE_TEST_STORE } from "../../src/constant";
 import { getStore } from "../utils";
 

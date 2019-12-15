@@ -4,7 +4,7 @@ import {
   actions as tagsActions,
   types as tagsTypes,
   selectors as tagsSelectors
-} from "../../src/modulesDuck/tagsDuck";
+} from "../../src/reducers/tagsDuck";
 import { MODE_TEST_STORE } from "../../src/constant";
 import tagsServices from "../../src/services/tagServices";
 import { getStore } from "../utils";

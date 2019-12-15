@@ -1,12 +1,12 @@
 import _ from "lodash";
 
-import { types as feedTypes } from "../modulesDuck/feedDuck";
+import { types as feedTypes } from "../reducers/feedDuck";
 import {
   actions as tutsActions,
   types as tutsType
-} from "../modulesDuck/tutsDuck";
-import { actions as userActions } from "../modulesDuck/userDuck";
-import { types as authTypes } from "../modulesDuck/authDuck";
+} from "../reducers/tutsDuck";
+import { actions as userActions } from "../reducers/userDuck";
+import { types as authTypes } from "../reducers/authDuck";
 
 const convertFeedToTutsPayload = tuts => ({ tuts });
 

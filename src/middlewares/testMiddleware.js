@@ -2,7 +2,7 @@ import { MODE_TEST_STORE } from "../constant";
 import {
   actions as actionDuckActions,
   types as actionDuckTypes
-} from "../modulesDuck/actionDuck";
+} from "../reducers/actionDuck";
 
 const testMiddleware = (config = {}) => store => next => action => {
   const { mode } = config;

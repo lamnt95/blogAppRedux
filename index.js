@@ -1,3 +1,4 @@
 import createAppStore from "./src";
+import reducers from "./src/reducers";
 
-export default createAppStore;
+export default { createAppStore, reducers };
