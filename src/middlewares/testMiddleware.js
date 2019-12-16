@@ -19,8 +19,16 @@ const testMiddleware = (config = {}) => store => next => action => {
     })
   );
 
-  if (mode === MODE_TEST_STORE.LOG)
-    console.log(`${type} *** ${JSON.stringify(payload)}`);
+  if (mode === MODE_TEST_STORE.LOG) {
+    console.log(" ");
+    console.log("***** ACTION *****");
+    console.log(`TYPE ${type}`);
+    console.log("PAYLOAD");
+    console.log(payload);
+    console.log("NEXT STATE");
+    console.log(store.getState());
+    console.log(" ");
+  }
   next(action);
 };
 
